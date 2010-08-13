@@ -1,0 +1,45 @@
+#!/bin/sh
+
+###############################################################################
+#
+# Waterfall Display start up script
+#
+# Project: OpenSonATA
+# Version: 2.0
+# Author:  Jon Richards (current maintainer)
+#          The OpenSonATA code is the result of many programmers over many 
+#          years.
+# 
+# This scripts executes the opensonata.dataDisplays.WaterfallDisplay class.
+#
+# Copyright 2010 The SETI Institute
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); 
+# you may not use this file except in compliance with the License. 
+# You may obtain a copy of the License at 
+# http://www.apache.org/licenses/LICENSE-2.0 Unless required by 
+# applicable law or agreed to in writing, software distributed 
+# under the License is distributed on an "AS IS" BASIS, WITHOUT 
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+# See the License for the specific language governing permissions 
+# and limitations under the License. 
+# 
+###############################################################################
+
+# The SONATADIR environment variable must be declared for this script to
+# finction properly.
+if [ "${SONATADIR}" ] 
+then
+    # Run the WaterfallDisplay
+    java -classpath $SONATADIR/lib/jtransforms-2.3.jar:$SONATADIR/lib/plot.jar:$SONATADIR/lib opensonata.dataDisplays.WaterfallDisplay $*
+else
+    echo "ERROR: waterfallDisplay"
+    echo "You need to set the environment variable SONATADIR to point to the"
+    echo "base directory of the openSonATA release. For example:"
+    echo "   setenv SONATADIR ~/OpenSonATA_x.x"
+    exit 0
+fi
+
+
+
+
