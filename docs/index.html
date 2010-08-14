@@ -5,121 +5,38 @@
 <center>
 <h1>OpenSonATA Release 2.0</h1>
 </center>
+<center>August 13, 2010</center>
 
 <h2>Notes</h2>
 
-This is rease 2.0 SonATA executables and the start of source code releasing. Please see the <a href="roadmap.html">release roadmap</a> for more details.
+This is Release 2.0 SonATA, executables and the start of source code releasing. Please see the <a href="roadmap.html">release roadmap</a> for more details about what we are going to release and when.
+<BR><BR>
+This release contains the source code for these openSonATA applications:
+<ul>
+  <li>The Waterfall Display</li>
+  <li>The Baseline Display</li>
+  <li>A new curses based information display called sonataInfoDisplay </li>
+</ul>
 
-This release contains the binary versions of the OpenSonATA software as well as the source code for The Waterfall Display, the Baseline Display and the curses based status display (called sonataInfoDisplay). Click <a href="software2.0.html" targer="_software">Here</a> for more details on the source code.
+<center><b>Click <a href="software2.0.html" target="_software">Here</a> for more details about the source code. Information about obtaining and installing the source code is included below.</b></center>
 
-<BR>
 <BR>
 For more information please visit <a href="http://setiQuest.org">setiQuest.org</a>
 
-<h2>Requirements</h2>
-
-<ul>
-	<li>A Computer with at least two 64 bit SSE3 compatible Intel processors.  4GB RAM +</li>
-	<li>OpenSUSE 11.2, 64-bit version</li>
-	<li>Java JDK 1.5</li>
-	<li>gcc 4.3.2 or greater</li>
-	<li>doxygen</li>
-	<li>the curses library (/usr/lib64/libncurses.so) if you wish to run the sonataInfoDisplay program, and the curses build software if you wish to build the sonataInfoDisplay program.</li>
-</ul>
-
-<BR>
-Works well with Linux installed in a virtual machine (like VMWare)
 <BR><BR>
-Note: We tested the install on a "fresh" install of OpenSUSE in VMWare.
-<BR>
-When Installed with Gnome as the windowing system no extra system libraries were required.
-<BR>
-When installed with KDE as the windowing system the following needed to be installed (we used yast)
+Release 2.0 is intended to be an add on to Release 1.0. Release 1.0 was the binary release that supplied only the executables and source files to run the SonATA software in a limited scope on your computer. Release 2.0 is the start of SETI providing source code for the programs included in the binary release.
 
 <ul>
-	<li>tcl</li>
-	<li>libmysqlclient_r16</li>
+  <li>First, you need to install Release 1.0. Please follow the instructions at the <a href="http://ec2-184-73-112-17.compute-1.amazonaws.com/index.html">setiCode Download</a> page to download and install the Release 1.0. If you have not done so already, try to run the <i>sonata-gen</i> and <i>sonata-vger</i> scripts as explained in the Release 1.0 documentation. See the instructions at <a href="http://ec2-184-73-112-17.compute-1.amazonaws.com/release.html">openSonATA Release 1.0</a> page.</li>
+  <li>To download the Release 2.0 software <b><i>git clone git://github.com/setiQuest/setiCode.git</i></b></li>
+  <li>Copy the contents (overwriting) of the docs directory from the GIT repoitory into the docs directory of Release 1.0.</li>
+  <li>Copy the <i>src</i> directory from the GIT repoitory into the root directory of Release 1.0. (probably called OpenSonATA_1.0)</li>
+  <li>In your Release 1.0 directory <i>cd src</i>, then <i>make</i>.</li>
+  <li>Read the contents of the <a href="software2.0.html" target="_software">software page</a> to get started and learn about the source code located in the src directory.</li>
 </ul>
 
-<BR>
-
-<h2>Installation</h2>
-
-<ul>
-
-  <li>Become root user. Edit /etc/sudoers. Add the line "opensonata ALL=(ALL) NOPASSWD: ALL", replacing "opensonata" with the user name of the account you will be running OpenSonATA from. Save and exit from root user.</li>
-  <li>PUT THE GIT DOWNLOAD INSTRUCTIONS HERE...</li>
-  <li>cd ./OpenSonATA_2.0</li>
-  <li>If you have downloaded the Release 2.0 source code you may cd into the <i>src</i> directory and do a <i>make</i>. This will build the WaterfallDisplay, BaselineDisplay, and the sonataInfoDisplay programs. Click <a href="software2.0.html" targer="_software">Here</a> for more details about the source code.</li>
-
-</ul>
-
-<BR>
-<h2>Running</h2>
-<BR>
-<b>Run SonATA using a signal generator program as the signal source...</b>
-
-<ul>
-  <li>run "sonata-gen" to run sonata with a packet generator supplying the signal.</li>
-  <li>Several windows will pop up filling the screen. Wait till the top window labled "System Status" lists these components:
-    <ul>
-      <li>arch1</li>
-      <li>chan1x</li>
-      <li>control1</li>
-      <li>dx1000</li>
-    </ul>
-
-  <br>
-  <img src="screen1.png"/>
-
-  </li>
-
-  <li>In the window labeled "SSE-Seeker" enter these 2 commands:
-    <ul>
-      <li>source sonata-demo.tcl</li>
-      <li>start obs</li>
-    </ul>
-  </li>
-
-  <li>Wait about 2 minutes. The lower left window should display a waterfall.
-  <BR>NOTE: You my need to File-&gt;Open in the Waterfall Display program the very first time. You can do this AFTER the data collection has begun.
-  <BR>
-  <BR>
-  <img src="opensonata1.png"/>
-  </li>
-  <li>To exit openSonATA, press the enter key in the terminal where you started SonATA. All the programs should quit immediately.</li>
-
-</ul>
-
-<BR>
-
-<b>NEXT: Try running a replay of a voyager spacecraft observation.</b>
-
-<ul>
-
-  <li>Run the "sonata-vger" script.</li>
-  <li>Several windows will pop up filling the screen. Wait till the top window labled "System Status" lists these components:
-    <ul>
-      <li>arch1</li>
-      <li>chan1x</li>
-      <li>control1</li>
-      <li>dx1000</li>
-    </ul>
-  </li>
-
-  <li>In the window labeled "SSE-Seeker" enter this command: &quot;source vger-demo.tcl&quot;</li>
-
-
-  <li>Wait about 2 minutes. The lower left window should display a waterfall.
-  <BR>NOTE: You my need to File-&gt;Open in the Waterfall Display program the very first time. You can do this AFTER the data collection has begun.
-  <BR>
-  <BR>
-  <img src="vger_screen1.png"/>
-  </li>
-  <li>To exit openSonATA, press the enter key in the terminal where you started SonATA. All the programs should quit immediately.</li>
-</ul>
-
-
+<h2>How You Can Help!</h2>
+Please visit the <a href="software2.0.html" target="_software">source code</a> page. The documentation for each software application source code contains a list of things that need work. 
 
 </body>
 
