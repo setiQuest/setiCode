@@ -1,5 +1,5 @@
-OpenSonATA Release 2.0
-August 13, 2010
+OpenSonATA Release 2.1
+August 20, 2010
 setiQuest.org
 
-Type "make" to install all the software for release 2.0. then cd ../docs and view the index.html file.
+Type "make" to build the software for release 2.1.

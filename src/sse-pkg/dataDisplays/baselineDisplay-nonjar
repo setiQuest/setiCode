@@ -27,7 +27,10 @@
 ###############################################################################
 
 # The SONATADIR environment variable must be declared for this script to
-# finction properly.
+# function properly.
+
+SONATADIR=..
+
 if [ "${SONATADIR}" ]
 then
     # Run the BaselineDisplay

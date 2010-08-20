@@ -3,8 +3,8 @@
  *
  * <center>
  * Waterfall and Basefile Display Programs<BR>
- * Release 2.0<BR>
- * Release Date Aug 13, 2010<BR>
+ * Release 2.1<BR>
+ * Release Date Aug 20, 2010<BR>
  * Visit <a href="http://setiQuest.org" target="_setiquest">setiQuest.org</a>
  * for participation details.
  * </center>
