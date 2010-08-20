@@ -12,7 +12,8 @@ SOURCES=main.cpp details.cpp utils.cpp screen.cpp components.cpp
 OBJECTS1=$(SOURCES:.cpp=.o)
 OBJECTS=$(OBJECTS1:.c=.o)
 EXECUTABLE=sonataInfoDisplay
-LIBS = -lnsl  -L/usr/lib -lm -lz -lpthread -lrt -lncurses
+#LIBS = -lnsl  -L/usr/lib -lm -lz -lpthread -lrt -lncurses
+LIBS = -L/usr/lib -lm -lz -lncurses
 
 all: $(SOURCES) $(EXECUTABLE) data docs
 
