@@ -1,0 +1,3 @@
+./sonataInfoDisplay ../data/sse-system-status.txt ./x1 ./x2
+rm -f ./x1
+rm -f ./x2
