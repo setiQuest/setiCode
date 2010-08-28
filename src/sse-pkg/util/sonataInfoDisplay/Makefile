@@ -21,7 +21,8 @@ $(BUILD_BIN)/$(EXECUTABLE): $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS) 
 	$(CXX) -o $@ $(OBJECTS) $(EXTRA_OBJS) $(LIBS)
-	mv $(EXECUTABLE) $(BUILD_BIN)
+	# This should be moved to an 'install' target.
+	cp $(EXECUTABLE) $(BUILD_BIN)
 	cp ./displayDemo $(BUILD_BIN)
 
 dirs:
