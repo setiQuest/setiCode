@@ -7,3 +7,6 @@ sonata_archive/
 sonata_install/
 src.LGPL/
 *~
+/lib/
+/src/sse-pkg/util/sonataInfoDisplay/*.o
+src/sse-pkg/util/sonataInfoDisplay/sonataInfoDisplay
