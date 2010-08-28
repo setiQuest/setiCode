@@ -1,0 +1,9 @@
+README_OpenSonATA_1.0
+data/
+docs/
+sonata-gen
+sonata-vger
+sonata_archive/
+sonata_install/
+src.LGPL/
+*~
