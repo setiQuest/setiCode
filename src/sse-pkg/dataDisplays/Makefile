@@ -1,4 +1,4 @@
-LIB_DIR=../../../lib
+LIB_DIR=../../../sonata_install/lib
 BIN_DIR=../../../sonata_install/bin
 DATA_DIR=../../../data
 DOCS_DIR=../../../docs
