@@ -1,5 +1,5 @@
 LIB_DIR=../../../lib
-BIN_DIR=../../../bin
+BIN_DIR=../../../sonata_install/bin
 DATA_DIR=../../../data
 DOCS_DIR=../../../docs
 PACKAGE=opensonata.dataDisplays
