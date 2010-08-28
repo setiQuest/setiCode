@@ -1,0 +1,21 @@
+It's possible that an incompatible Java might be present.  I found this
+to be the case on my openSUSE 11.2 system.
+
+Though I had a compatible 'java' installed (from java-1_6_0-openjdk), I
+had incompatible 'javac' installed (from java-1_5_0-gcj-compat-devel).
+
+The fix:
+
+$ zypper rm java-1_5_0-gcj-compat java-1_5_0-gcj-compat-devel
+Loading repository data...
+Reading installed packages...
+Resolving package dependencies...
+
+The following NEW package is going to be installed:
+  java-1_6_0-openjdk-devel 
+
+The following packages are going to be REMOVED:
+  java-1_5_0-gcj-compat java-1_5_0-gcj-compat-devel 
+
+1 new package to install, 2 to remove.
+...
