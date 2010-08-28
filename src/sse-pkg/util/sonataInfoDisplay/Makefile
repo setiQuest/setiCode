@@ -1,4 +1,4 @@
-BUILD_BIN      = ../../../../bin
+BUILD_BIN      = ../../../../sonata_install/bin
 DATA_DIR      = ../../../../data
 DOC_DIR       = ../../../../docs
 
