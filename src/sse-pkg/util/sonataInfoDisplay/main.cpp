@@ -93,14 +93,6 @@ int main(int argc, char **argv)
     systemLogFileName    = argv[2]; 
     systemErrorFileName  = argv[3]; 
 
-    //Touch the files to make sure they exists
-    string touchCommand = "touch " + systemStatusFileName;
-    system(touchCommand.c_str());
-    touchCommand = "touch " + systemLogFileName;
-    system(touchCommand.c_str());
-    touchCommand = "touch " + systemErrorFileName;
-    system(touchCommand.c_str());
-
     //Create the commands to read in the files
     FILE *statusFp = NULL;
     FILE *logFp = NULL;
@@ -110,21 +102,21 @@ int main(int argc, char **argv)
     commandLog          = systemLogFileName;
     commandError        = systemErrorFileName;
 
-    statusFp = fopen(commandSystemStatus.c_str(), "r");
+    statusFp = fopen(commandSystemStatus.c_str(), "a+");
     if(statusFp == NULL)
     {
         fprintf(stdout," Could not open %s, EXITING.\n",
                 commandSystemStatus.c_str());
     }
 
-    logFp = fopen(commandLog.c_str(), "r");
+    logFp = fopen(commandLog.c_str(), "a+");
     if(logFp == NULL)
     {
         fclose(logFp);
         fprintf(stdout," Could not open %s, EXITING.\n", commandLog.c_str());
     }
 
-    errorFp = fopen(commandLog.c_str(), "r");
+    errorFp = fopen(commandLog.c_str(), "a+");
     if(errorFp == NULL)
     {
         fclose(errorFp);
