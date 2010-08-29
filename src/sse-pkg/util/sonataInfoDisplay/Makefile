@@ -8,7 +8,7 @@ CXX=g++ -g
 CXXFLAGS=-Wall -W -O2 -D_NO_PROTO -D_REENTRANT
 
 
-SOURCES=main.cpp details.cpp utils.cpp screen.cpp components.cpp
+SOURCES=main.cpp details.cpp utils.cpp screen.cpp components.cpp logfile.cpp
 OBJECTS1=$(SOURCES:.cpp=.o)
 OBJECTS=$(OBJECTS1:.c=.o)
 EXECUTABLE=sonataInfoDisplay

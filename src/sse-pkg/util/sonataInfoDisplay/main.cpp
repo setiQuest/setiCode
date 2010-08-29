@@ -46,6 +46,7 @@
 #include "utils.h"
 #include "screen.h"
 #include "components.h"
+#include "logfile.h"
 
 /**
  * Main entry point of the program.
@@ -93,46 +94,20 @@ int main(int argc, char **argv)
     systemLogFileName    = argv[2]; 
     systemErrorFileName  = argv[3]; 
 
-    //Create the commands to read in the files
-    FILE *statusFp = NULL;
-    FILE *logFp = NULL;
-    FILE *errorFp = NULL;
-
+    // Why this duplication?
     commandSystemStatus = systemStatusFileName;
     commandLog          = systemLogFileName;
     commandError        = systemErrorFileName;
 
-    statusFp = fopen(commandSystemStatus.c_str(), "a+");
-    if(statusFp == NULL)
-    {
-        fprintf(stdout," Could not open %s, EXITING.\n",
-                commandSystemStatus.c_str());
-    }
-
-    logFp = fopen(commandLog.c_str(), "a+");
-    if(logFp == NULL)
-    {
-        fclose(logFp);
-        fprintf(stdout," Could not open %s, EXITING.\n", commandLog.c_str());
-    }
-
-    errorFp = fopen(commandLog.c_str(), "a+");
-    if(errorFp == NULL)
-    {
-        fclose(errorFp);
-        fprintf(stdout," Could not open %s, EXITING.\n", commandError.c_str());
-    }
-
-
-    //Get the file descriptors from file pointers.
-    int statusFd = fileno(statusFp);
-    int logFd = fileno(logFp);
-    int errorFd = fileno(errorFp);
+    Logfile systemStatusFile = Logfile(commandSystemStatus);
+    Logfile systemLogFile = Logfile(commandLog);
+    Logfile systemErrorFile = Logfile(commandError);
 
     //Figure out the max file descriptor to use in the select() call.
-    int maxFd = statusFd;
-    if(logFd > maxFd) maxFd = logFd;
-    if(errorFd > maxFd) maxFd = errorFd;
+    //FIXME: This looks awful.
+    int maxFd = systemStatusFile.getFd();
+    if(systemLogFile.getFd() > maxFd) maxFd = systemLogFile.getFd();
+    if(systemErrorFile.getFd() > maxFd) maxFd = systemErrorFile.getFd();
 
     //Initialize the curses screen.
     screen.init();
@@ -147,9 +122,9 @@ int main(int argc, char **argv)
 
         FD_ZERO(&rfds);
         FD_SET(0, &rfds);
-        FD_SET(statusFd, &rfds);
-        FD_SET(logFd, &rfds);
-        FD_SET(errorFd, &rfds);
+        FD_SET(systemStatusFile.getFd(), &rfds);
+        FD_SET(systemLogFile.getFd(), &rfds);
+        FD_SET(systemErrorFile.getFd(), &rfds);
 
         tv.tv_sec = 0;
         tv.tv_usec = 200000; //1/5 second
@@ -157,9 +132,9 @@ int main(int argc, char **argv)
         retVal = select(maxFd+1, &rfds, NULL, NULL, &tv);
 
         //Process any data read from the status file.
-        if(FD_ISSET(statusFd, &rfds))
+        if(FD_ISSET(systemStatusFile.getFd(), &rfds))
         {
-            fgets(line, sizeof(line)-1, statusFp);
+  	    fgets(line, sizeof(line)-1, systemStatusFile.getFp());
             if(line[0] != 0 && componentDetails.addWithFilter(line))
                 screen.paint(&componentDetails);
             linesSinceLastStatus++;
@@ -177,12 +152,12 @@ int main(int argc, char **argv)
         }
 
         //Process the log file
-        if(FD_ISSET(logFd, &rfds))
+        if(FD_ISSET(systemLogFile.getFd(), &rfds))
         {
         }
 
         //Process the error file
-        if(FD_ISSET(errorFd, &rfds))
+        if(FD_ISSET(systemErrorFile.getFd(), &rfds))
         {
         }
 
