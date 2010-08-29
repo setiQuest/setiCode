@@ -134,7 +134,7 @@ int main(int argc, char **argv)
         //Process any data read from the status file.
         if(FD_ISSET(systemStatusFile.getFd(), &rfds))
         {
-  	    fgets(line, sizeof(line)-1, systemStatusFile.getFp());
+	    systemStatusFile.getLine(line, sizeof(line) - 1);
             if(line[0] != 0 && componentDetails.addWithFilter(line))
                 screen.paint(&componentDetails);
             linesSinceLastStatus++;

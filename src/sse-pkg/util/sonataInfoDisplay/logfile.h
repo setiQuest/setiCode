@@ -52,6 +52,8 @@ using namespace std;
 
         /**
 	 * The constructor.
+	 *
+	 * @param filename name of file
 	 */
         Logfile(string filename);
 
@@ -67,13 +69,18 @@ using namespace std;
 
 	/**
 	 * Returns the logfile's file descriptor.
+	 *
+	 * @return the file descriptor
 	 */
 	int getFd();
 
 	/**
-	 * Returns the logfile's file pointer.
+	 * Reads a line from logfile.
+	 *
+	 * @param buf buffer for storing read line
+	 * @param bufsize size of read buffer
 	 */
-	FILE *getFp();
+	void getLine(char *buf, unsigned long bufsize);
 
     private:
 	FILE *fp;

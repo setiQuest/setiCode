@@ -37,6 +37,8 @@
 /*
  * Constructor
  * Opens specified logfile & gathers information.
+ *
+ * @param filename name of file
  */
 Logfile::Logfile(string filename)
 {
@@ -83,6 +85,8 @@ int Logfile::checkInode()
 
 /*
  * Returns the logfile's file descriptor.
+ *
+ * @return the file descriptor
  */
 int Logfile::getFd()
 {
@@ -90,11 +94,12 @@ int Logfile::getFd()
 }
 
 /*
- * Returns the logfile's file pointer.
+ * Reads a line from logfile, stores in buf.
  *
- * FIXME: This function should be removed.
+ * @param buf buffer for storing read line
+ * @param bufsize size of read buffer
  */
-FILE *Logfile::getFp()
+void Logfile::getLine(char *buf, unsigned long bufsize)
 {
-    return fp;
+    fgets(buf, bufsize, fp);
 }
