@@ -112,32 +112,19 @@ void Screen::init()
 /*
  * Handles the screen rezise, which comes in as the result
  * of a SIGWINCH signal.
- * Executes the program "resize" to read in the terminal size.
+ * Uses ioctl(TIOCGWINSZ) to obtain the terminal size.
  *
  * @param sig the signal.
  */
 void Screen::screenResize(int sig)
 {
+    struct winsize size;
     Screen::m_resizeEventOccurred = true;
-    FILE *fp = popen("resize", "r");
-    if(fp)
-    {
-        char line[64];
-        memset(line, 0, 64);
-        while(fgets(line, sizeof(line)-1, fp))
-        {
-            if(strstr(line, "COLUMNS"))
-            {
-                Screen::m_newCols = atol(line + 16);
-            }
-            else if(strstr(line, "LINES"))
-            {
-                Screen::m_newRows = atol(line + 14);
-            }
-            memset(line, 0, 64);
-        }
 
-        fclose(fp);
+    if (ioctl(fileno(stdout), TIOCGWINSZ, &size) == 0)
+    {
+        Screen::m_newCols = size.ws_col;
+        Screen::m_newRows = size.ws_row;
     }
 }
 
