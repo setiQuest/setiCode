@@ -66,8 +66,8 @@ void Logfile::openLogfile(string filename)
     fp = fopen(filename.c_str(), "a+");
     if(fp == NULL)
     {
-	// Change to stderr?
-	fprintf(stdout," Could not open %s, EXITING.\n", filename.c_str());
+        // Change to stderr?
+        fprintf(stdout," Could not open %s, EXITING.\n", filename.c_str());
     }
 
     fd = fileno(fp);
@@ -76,11 +76,11 @@ void Logfile::openLogfile(string filename)
 
     if(fstat(fd, &stbuf) == 0)
     {
-	inode = stbuf.st_ino;
+        inode = stbuf.st_ino;
     }
     else
     {
-	inode = -1;
+        inode = -1;
     }
     
 }
@@ -96,15 +96,15 @@ void Logfile::checkRefresh()
 
     if (stat(logfile.c_str(), &stbuf) == 0)
     {
-	if (inode != stbuf.st_ino)
-	{
-	    //FIXME: Need exception handling.
-	    if(fclose(fp) == 0)
-	    {
-		openLogfile(logfile);
-	    }
-	}
-    }	    
+        if (inode != stbuf.st_ino)
+        {
+            //FIXME: Need exception handling.
+            if(fclose(fp) == 0)
+            {
+                openLogfile(logfile);
+            }
+        }
+    }       
 }
 
 /*
@@ -129,9 +129,9 @@ void Logfile::getLine(char *buf, unsigned long bufsize)
 
     if (s == NULL)
     {
-	if (feof(fp))
-	{
-	    checkRefresh();
-	}
+        if (feof(fp))
+        {
+            checkRefresh();
+        }
     }
 }

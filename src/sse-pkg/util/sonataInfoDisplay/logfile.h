@@ -51,49 +51,49 @@ using namespace std;
     public:
 
         /**
-	 * The constructor.
-	 *
-	 * @param filename name of file
-	 */
+         * The constructor.
+         *
+         * @param filename name of file
+         */
         Logfile(string filename);
 
         /**
-	 * The destructor.
-	 */
+         * The destructor.
+         */
         ~Logfile();
 
-	/**
-	 * Returns the logfile's file descriptor.
-	 *
-	 * @return the file descriptor
-	 */
-	int getFd();
+        /**
+         * Returns the logfile's file descriptor.
+         *
+         * @return the file descriptor
+         */
+        int getFd();
 
-	/**
-	 * Reads a line from logfile.
-	 *
-	 * @param buf buffer for storing read line
-	 * @param bufsize size of read buffer
-	 */
-	void getLine(char *buf, unsigned long bufsize);
+        /**
+         * Reads a line from logfile.
+         *
+         * @param buf buffer for storing read line
+         * @param bufsize size of read buffer
+         */
+        void getLine(char *buf, unsigned long bufsize);
 
     private:
-	string logfile;
-	FILE *fp;
-	int fd;
-	ino_t inode;
+        string logfile;
+        FILE *fp;
+        int fd;
+        ino_t inode;
 
-	/**
-	 * Open logfile.
-	 *
-	 * @param filename name of file
-	 */
-	void openLogfile(string filename);
+        /**
+         * Open logfile.
+         *
+         * @param filename name of file
+         */
+        void openLogfile(string filename);
 
-	/**
-	 * Checks to see if logfile inode has changed, close & reopen if so.
-	 */
-	void checkRefresh();
+        /**
+         * Checks to see if logfile inode has changed, close & reopen if so.
+         */
+        void checkRefresh();
 
 };
 
