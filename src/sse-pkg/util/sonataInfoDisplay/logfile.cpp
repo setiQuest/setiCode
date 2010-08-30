@@ -42,6 +42,25 @@
  */
 Logfile::Logfile(string filename)
 {
+    logfile = filename;
+    openLogfile(logfile);
+}
+
+/*
+ * Destructor
+ * Does nothing.
+ */
+Logfile::~Logfile()
+{
+}
+
+/**
+ * Open logfile.
+ *
+ * @param filename name of file
+ */
+void Logfile::openLogfile(string filename)
+{
     // Opening the files a+ eliminates the need to touch them to ensure
     // their existence.
     fp = fopen(filename.c_str(), "a+");
@@ -63,24 +82,29 @@ Logfile::Logfile(string filename)
     {
 	inode = -1;
     }
-}
-
-/*
- * Destructor
- * Does nothing.
- */
-Logfile::~Logfile()
-{
+    
 }
 
 /*
  * Checks to see if logfile inode has changed; if it has, the most
  * likely reason is that a new logfile has been created--in which case
- * we should switch to reading it.
+ * we should switch to reading the new file.
  */
-int Logfile::checkInode()
+void Logfile::checkRefresh()
 {
-    return 0;
+    struct stat stbuf;
+
+    if (stat(logfile.c_str(), &stbuf) == 0)
+    {
+	if (inode != stbuf.st_ino)
+	{
+	    //FIXME: Need exception handling.
+	    if(fclose(fp) == 0)
+	    {
+		openLogfile(logfile);
+	    }
+	}
+    }	    
 }
 
 /*
@@ -101,5 +125,13 @@ int Logfile::getFd()
  */
 void Logfile::getLine(char *buf, unsigned long bufsize)
 {
-    fgets(buf, bufsize, fp);
+    char *s = fgets(buf, bufsize, fp);
+
+    if (s == NULL)
+    {
+	if (feof(fp))
+	{
+	    checkRefresh();
+	}
+    }
 }

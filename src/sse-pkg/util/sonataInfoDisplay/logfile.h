@@ -63,11 +63,6 @@ using namespace std;
         ~Logfile();
 
 	/**
-	 * Checks to see if logfile inode has changed.
-	 */
-	static int checkInode();
-
-	/**
 	 * Returns the logfile's file descriptor.
 	 *
 	 * @return the file descriptor
@@ -83,9 +78,22 @@ using namespace std;
 	void getLine(char *buf, unsigned long bufsize);
 
     private:
+	string logfile;
 	FILE *fp;
 	int fd;
 	ino_t inode;
+
+	/**
+	 * Open logfile.
+	 *
+	 * @param filename name of file
+	 */
+	void openLogfile(string filename);
+
+	/**
+	 * Checks to see if logfile inode has changed, close & reopen if so.
+	 */
+	void checkRefresh();
 
 };
 

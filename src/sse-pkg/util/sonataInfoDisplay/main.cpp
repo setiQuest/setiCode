@@ -129,6 +129,8 @@ int main(int argc, char **argv)
         tv.tv_sec = 0;
         tv.tv_usec = 200000; //1/5 second
 
+	//FIXME: This results in rapid polling because select() returns
+	//immediately when a descriptor in the set is at EOF.
         retVal = select(maxFd+1, &rfds, NULL, NULL, &tv);
 
         //Process any data read from the status file.
