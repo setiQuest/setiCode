@@ -37,7 +37,9 @@
 
 #include <string>
 #include <stdio.h>
+#include <sys/select.h>
 #include <sys/stat.h>
+#include <list>
 
 using namespace std;
 
@@ -78,9 +80,9 @@ using namespace std;
         void getLine(char *buf, unsigned long bufsize);
 
         /**
-         * Retrieves maximum file descriptor.
+         * Reads from all Logfile instances.
          */
-        static int getMaxFd();
+        static int readLogfiles(list<Logfile> logfiles);
 
     private:
 
@@ -88,6 +90,7 @@ using namespace std;
         FILE *fp;
         int fd;
         ino_t inode;
+        static fd_set rfds;     // FIXME: Not yet used.
         static int maxFd;
 
         /**

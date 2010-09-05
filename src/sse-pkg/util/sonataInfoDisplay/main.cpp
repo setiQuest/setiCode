@@ -47,6 +47,7 @@
 #include "screen.h"
 #include "components.h"
 #include "logfile.h"
+#include <list>
 
 /**
  * Main entry point of the program.
@@ -72,10 +73,9 @@ int main(int argc, char **argv)
     string commandLog = "";
     string commandError = "";
     Screen screen;
-    fd_set rfds;
-    struct timeval tv;
-    int retVal = -1;
+    fd_set rfds;                // FIXME: To be replaced by Logfile::rfds.
     char line[2048];
+    list<Logfile> logfiles;
 
     Components componentDetails;
 
@@ -94,7 +94,6 @@ int main(int argc, char **argv)
     systemLogFileName    = argv[2]; 
     systemErrorFileName  = argv[3]; 
 
-    // Why this duplication?
     commandSystemStatus = systemStatusFileName;
     commandLog          = systemLogFileName;
     commandError        = systemErrorFileName;
@@ -102,6 +101,10 @@ int main(int argc, char **argv)
     Logfile systemStatusFile = Logfile(commandSystemStatus);
     Logfile systemLogFile = Logfile(commandLog);
     Logfile systemErrorFile = Logfile(commandError);
+
+    logfiles.push_back(systemStatusFile);
+    logfiles.push_back(systemLogFile);
+    logfiles.push_back(systemErrorFile);
 
     //Initialize the curses screen.
     screen.init();
@@ -114,18 +117,9 @@ int main(int argc, char **argv)
     while(1)
     {
 
-        FD_ZERO(&rfds);
-        FD_SET(0, &rfds);
-        FD_SET(systemStatusFile.getFd(), &rfds);
-        FD_SET(systemLogFile.getFd(), &rfds);
-        FD_SET(systemErrorFile.getFd(), &rfds);
+        Logfile::readLogfiles(logfiles);
 
-        tv.tv_sec = 0;
-        tv.tv_usec = 200000; //1/5 second
-
-        //FIXME: This results in rapid polling because select() returns
-        //immediately when a descriptor in the set is at EOF.
-        retVal = select(Logfile::getMaxFd() + 1, &rfds, NULL, NULL, &tv);
+        // FIXME: Move all this out of main.
 
         //Process any data read from the status file.
         if(FD_ISSET(systemStatusFile.getFd(), &rfds))
@@ -164,4 +158,3 @@ int main(int argc, char **argv)
     return 0;
 
 }
-

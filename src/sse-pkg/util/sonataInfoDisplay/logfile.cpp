@@ -35,6 +35,7 @@
 #include "logfile.h"
 
 int Logfile::maxFd = 0;
+fd_set Logfile::rfds;           // FIXME: Not yet used.
 
 /*
  * Constructor
@@ -75,7 +76,7 @@ void Logfile::openLogfile(string filename)
     fd = fileno(fp);
     if(fd > Logfile::maxFd)
     {
-	Logfile::maxFd = fd;
+        Logfile::maxFd = fd;
     }
 
     struct stat stbuf;
@@ -142,12 +143,31 @@ void Logfile::getLine(char *buf, unsigned long bufsize)
     }
 }
 
-/*
- * Returns the maximum logfile file descriptor.
- *
- * @return the maximum file descriptor
+/**
+ * Reads from all Logfile instances.
  */
-int Logfile::getMaxFd()
+
+int Logfile::readLogfiles(list<Logfile> logfiles)
 {
-    return Logfile::maxFd;
+    // FIXME: Not using the class Logfile::rfds yet!
+    FD_ZERO(&rfds);
+    FD_SET(0, &rfds);
+
+    list<Logfile>::iterator it;
+
+    for(it=logfiles.begin(); it != logfiles.end(); it++)
+    {
+        FD_SET(it->getFd(), &rfds);
+    }
+    struct timeval tv;
+
+    tv.tv_sec = 0;
+    tv.tv_usec = 200000; //1/5 second
+
+    int retVal = -1;
+    //FIXME: This results in rapid polling because select() returns
+    //immediately when a descriptor in the set is at EOF.
+    retVal = select(Logfile::maxFd + 1, &rfds, NULL, NULL, &tv);
+
+    return retVal;
 }
