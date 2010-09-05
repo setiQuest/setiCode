@@ -51,6 +51,6 @@ clean:
 	rm -f $(DATA_DIR)/sse-system-status.txt
 	rm -rf $(DOC_DIR)/src/sse-pkg/util/sonataInfoDisplay
 
-.cpp.o:
+%.o: %.cpp %.h
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
