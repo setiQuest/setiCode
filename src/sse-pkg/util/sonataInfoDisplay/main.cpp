@@ -103,12 +103,6 @@ int main(int argc, char **argv)
     Logfile systemLogFile = Logfile(commandLog);
     Logfile systemErrorFile = Logfile(commandError);
 
-    //Figure out the max file descriptor to use in the select() call.
-    //FIXME: This looks awful.
-    int maxFd = systemStatusFile.getFd();
-    if(systemLogFile.getFd() > maxFd) maxFd = systemLogFile.getFd();
-    if(systemErrorFile.getFd() > maxFd) maxFd = systemErrorFile.getFd();
-
     //Initialize the curses screen.
     screen.init();
     screen.screenResize(0);
@@ -131,7 +125,7 @@ int main(int argc, char **argv)
 
         //FIXME: This results in rapid polling because select() returns
         //immediately when a descriptor in the set is at EOF.
-        retVal = select(maxFd+1, &rfds, NULL, NULL, &tv);
+        retVal = select(Logfile::getMaxFd() + 1, &rfds, NULL, NULL, &tv);
 
         //Process any data read from the status file.
         if(FD_ISSET(systemStatusFile.getFd(), &rfds))

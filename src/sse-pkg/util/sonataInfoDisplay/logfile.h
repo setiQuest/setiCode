@@ -77,11 +77,18 @@ using namespace std;
          */
         void getLine(char *buf, unsigned long bufsize);
 
+        /**
+         * Retrieves maximum file descriptor.
+         */
+        static int getMaxFd();
+
     private:
+
         string logfile;
         FILE *fp;
         int fd;
         ino_t inode;
+        static int maxFd;
 
         /**
          * Open logfile.

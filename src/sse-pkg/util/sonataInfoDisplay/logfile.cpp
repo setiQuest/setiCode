@@ -34,6 +34,8 @@
 
 #include "logfile.h"
 
+int Logfile::maxFd = 0;
+
 /*
  * Constructor
  * Opens specified logfile & gathers information.
@@ -71,6 +73,10 @@ void Logfile::openLogfile(string filename)
     }
 
     fd = fileno(fp);
+    if(fd > Logfile::maxFd)
+    {
+	Logfile::maxFd = fd;
+    }
 
     struct stat stbuf;
 
@@ -134,4 +140,14 @@ void Logfile::getLine(char *buf, unsigned long bufsize)
             checkRefresh();
         }
     }
+}
+
+/*
+ * Returns the maximum logfile file descriptor.
+ *
+ * @return the maximum file descriptor
+ */
+int Logfile::getMaxFd()
+{
+    return Logfile::maxFd;
 }
