@@ -165,8 +165,11 @@ int Logfile::readLogfiles(list<Logfile> logfiles)
     tv.tv_usec = 200000; //1/5 second
 
     int retVal = -1;
-    //FIXME: This results in rapid polling because select() returns
-    //immediately when a descriptor in the set is at EOF.
+
+    // FIXME: This results in rapid polling because select() returns
+    // immediately when a descriptor in the set is at EOF.
+    //
+    // Consider a delay by e.g. opting out of &rfds for n passes when at EOF?
     retVal = select(Logfile::maxFd + 1, &rfds, NULL, NULL, &tv);
 
     return retVal;

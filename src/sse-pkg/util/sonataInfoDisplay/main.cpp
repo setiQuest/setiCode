@@ -119,7 +119,7 @@ int main(int argc, char **argv)
 
         Logfile::readLogfiles(logfiles);
 
-        // FIXME: Move all this out of main.
+        // FIXME: Move all the stuff below out of main!
 
         //Process any data read from the status file.
         if(FD_ISSET(systemStatusFile.getFd(), &rfds))
