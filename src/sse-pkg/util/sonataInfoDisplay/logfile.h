@@ -51,6 +51,8 @@ using namespace std;
 {
 
     public:
+        // FIXME: make private
+        static fd_set m_rfds;
 
         /**
          * The constructor.
@@ -86,12 +88,11 @@ using namespace std;
 
     private:
 
-        string logfile;
-        FILE *fp;
-        int fd;
-        ino_t inode;
-        static fd_set rfds;     // FIXME: Not yet used.
-        static int maxFd;
+        string m_logfile;
+        FILE *m_fp;
+        int m_fd;
+        ino_t m_inode;
+        static int m_maxFd;
 
         /**
          * Open logfile.

@@ -69,11 +69,7 @@ int main(int argc, char **argv)
     string systemStatusFileName = "";
     string systemLogFileName = "";
     string systemErrorFileName = "";
-    string commandSystemStatus = "";
-    string commandLog = "";
-    string commandError = "";
     Screen screen;
-    fd_set rfds;                // FIXME: To be replaced by Logfile::rfds.
     char line[2048];
     list<Logfile> logfiles;
 
@@ -94,13 +90,9 @@ int main(int argc, char **argv)
     systemLogFileName    = argv[2]; 
     systemErrorFileName  = argv[3]; 
 
-    commandSystemStatus = systemStatusFileName;
-    commandLog          = systemLogFileName;
-    commandError        = systemErrorFileName;
-
-    Logfile systemStatusFile = Logfile(commandSystemStatus);
-    Logfile systemLogFile = Logfile(commandLog);
-    Logfile systemErrorFile = Logfile(commandError);
+    Logfile systemStatusFile = Logfile(systemStatusFileName);
+    Logfile systemLogFile = Logfile(systemLogFileName);
+    Logfile systemErrorFile = Logfile(systemErrorFileName);
 
     logfiles.push_back(systemStatusFile);
     logfiles.push_back(systemLogFile);
@@ -120,9 +112,10 @@ int main(int argc, char **argv)
         Logfile::readLogfiles(logfiles);
 
         // FIXME: Move all the stuff below out of main!
+        // (Note the current clumsy use of Logfile::m_rfds.)
 
-        //Process any data read from the status file.
-        if(FD_ISSET(systemStatusFile.getFd(), &rfds))
+        // Process any data read from the status file.
+        if(FD_ISSET(systemStatusFile.getFd(), &Logfile::m_rfds))
         {
             systemStatusFile.getLine(line, sizeof(line) - 1);
             if(line[0] != 0 && componentDetails.addWithFilter(line))
@@ -142,12 +135,12 @@ int main(int argc, char **argv)
         }
 
         //Process the log file
-        if(FD_ISSET(systemLogFile.getFd(), &rfds))
+        if(FD_ISSET(systemLogFile.getFd(), &Logfile::m_rfds))
         {
         }
 
         //Process the error file
-        if(FD_ISSET(systemErrorFile.getFd(), &rfds))
+        if(FD_ISSET(systemErrorFile.getFd(), &Logfile::m_rfds))
         {
         }
 

@@ -34,8 +34,8 @@
 
 #include "logfile.h"
 
-int Logfile::maxFd = 0;
-fd_set Logfile::rfds;           // FIXME: Not yet used.
+int Logfile::m_maxFd = 0;
+fd_set Logfile::m_rfds;
 
 /*
  * Constructor
@@ -45,8 +45,8 @@ fd_set Logfile::rfds;           // FIXME: Not yet used.
  */
 Logfile::Logfile(string filename)
 {
-    logfile = filename;
-    openLogfile(logfile);
+    m_logfile = filename;
+    openLogfile(m_logfile);
 }
 
 /*
@@ -66,28 +66,28 @@ void Logfile::openLogfile(string filename)
 {
     // Opening the files a+ eliminates the need to touch them to ensure
     // their existence.
-    fp = fopen(filename.c_str(), "a+");
-    if(fp == NULL)
+    m_fp = fopen(filename.c_str(), "a+");
+    if(m_fp == NULL)
     {
         // Change to stderr?
         fprintf(stdout," Could not open %s, EXITING.\n", filename.c_str());
     }
 
-    fd = fileno(fp);
-    if(fd > Logfile::maxFd)
+    m_fd = fileno(m_fp);
+    if(m_fd > Logfile::m_maxFd)
     {
-        Logfile::maxFd = fd;
+        Logfile::m_maxFd = m_fd;
     }
 
     struct stat stbuf;
 
-    if(fstat(fd, &stbuf) == 0)
+    if(fstat(m_fd, &stbuf) == 0)
     {
-        inode = stbuf.st_ino;
+        m_inode = stbuf.st_ino;
     }
     else
     {
-        inode = -1;
+        m_inode = -1;
     }
     
 }
@@ -101,14 +101,14 @@ void Logfile::checkRefresh()
 {
     struct stat stbuf;
 
-    if (stat(logfile.c_str(), &stbuf) == 0)
+    if (stat(m_logfile.c_str(), &stbuf) == 0)
     {
-        if (inode != stbuf.st_ino)
+        if (m_inode != stbuf.st_ino)
         {
             //FIXME: Need exception handling.
-            if(fclose(fp) == 0)
+            if(fclose(m_fp) == 0)
             {
-                openLogfile(logfile);
+                openLogfile(m_logfile);
             }
         }
     }       
@@ -121,7 +121,7 @@ void Logfile::checkRefresh()
  */
 int Logfile::getFd()
 {
-    return fd;
+    return m_fd;
 }
 
 /*
@@ -132,11 +132,11 @@ int Logfile::getFd()
  */
 void Logfile::getLine(char *buf, unsigned long bufsize)
 {
-    char *s = fgets(buf, bufsize, fp);
+    char *s = fgets(buf, bufsize, m_fp);
 
     if (s == NULL)
     {
-        if (feof(fp))
+        if (feof(m_fp))
         {
             checkRefresh();
         }
@@ -149,15 +149,14 @@ void Logfile::getLine(char *buf, unsigned long bufsize)
 
 int Logfile::readLogfiles(list<Logfile> logfiles)
 {
-    // FIXME: Not using the class Logfile::rfds yet!
-    FD_ZERO(&rfds);
-    FD_SET(0, &rfds);
+    FD_ZERO(&m_rfds);
+    FD_SET(0, &m_rfds);
 
     list<Logfile>::iterator it;
 
     for(it=logfiles.begin(); it != logfiles.end(); it++)
     {
-        FD_SET(it->getFd(), &rfds);
+        FD_SET(it->getFd(), &m_rfds);
     }
     struct timeval tv;
 
@@ -169,8 +168,8 @@ int Logfile::readLogfiles(list<Logfile> logfiles)
     // FIXME: This results in rapid polling because select() returns
     // immediately when a descriptor in the set is at EOF.
     //
-    // Consider a delay by e.g. opting out of &rfds for n passes when at EOF?
-    retVal = select(Logfile::maxFd + 1, &rfds, NULL, NULL, &tv);
+    // Consider a delay by e.g. opting out of &m_rfds for n passes when at EOF?
+    retVal = select(Logfile::m_maxFd + 1, &m_rfds, NULL, NULL, &tv);
 
     return retVal;
 }
