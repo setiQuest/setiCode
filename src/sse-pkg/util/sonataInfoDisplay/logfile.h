@@ -51,8 +51,6 @@ using namespace std;
 {
 
     public:
-        // FIXME: make private
-        static fd_set m_rfds;
 
         /**
          * The constructor.
@@ -86,6 +84,15 @@ using namespace std;
          */
         static int readLogfiles(list<Logfile> logfiles);
 
+	/**
+	 * Returns file descriptor set for reads.
+	 *
+	 * @return the file descriptor set for reads
+	 */
+	// FIXME: This will become private once all file-handling is moved
+	// out of main().
+	static fd_set *getDescriptors();
+
     private:
 
         string m_logfile;
@@ -93,6 +100,7 @@ using namespace std;
         int m_fd;
         ino_t m_inode;
         static int m_maxFd;
+        static fd_set m_rfds;
 
         /**
          * Open logfile.

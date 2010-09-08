@@ -173,3 +173,13 @@ int Logfile::readLogfiles(list<Logfile> logfiles)
 
     return retVal;
 }
+
+/**
+ * Returns file descriptor set for reads.
+ *
+ * @return the file descriptor set for reads
+ */
+fd_set *Logfile::getDescriptors()
+{
+    return &Logfile::m_rfds;
+}

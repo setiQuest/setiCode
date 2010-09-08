@@ -115,7 +115,7 @@ int main(int argc, char **argv)
         // (Note the current clumsy use of Logfile::m_rfds.)
 
         // Process any data read from the status file.
-        if(FD_ISSET(systemStatusFile.getFd(), &Logfile::m_rfds))
+        if(FD_ISSET(systemStatusFile.getFd(), Logfile::getDescriptors()))
         {
             systemStatusFile.getLine(line, sizeof(line) - 1);
             if(line[0] != 0 && componentDetails.addWithFilter(line))
@@ -135,12 +135,12 @@ int main(int argc, char **argv)
         }
 
         //Process the log file
-        if(FD_ISSET(systemLogFile.getFd(), &Logfile::m_rfds))
+        if(FD_ISSET(systemLogFile.getFd(), Logfile::getDescriptors()))
         {
         }
 
         //Process the error file
-        if(FD_ISSET(systemErrorFile.getFd(), &Logfile::m_rfds))
+        if(FD_ISSET(systemErrorFile.getFd(), Logfile::getDescriptors()))
         {
         }
 
