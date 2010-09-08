@@ -53,14 +53,16 @@ using namespace std;
     public:
 
         /**
-         * The constructor.
+         * Constructor
+	 * Opens specified logfile & gathers information.
          *
          * @param filename name of file
          */
         Logfile(string filename);
 
         /**
-         * The destructor.
+         * Destructor
+	 * Does nothing.
          */
         ~Logfile();
 
@@ -75,12 +77,16 @@ using namespace std;
          * Reads a line from logfile.
          *
          * @param buf buffer for storing read line
-         * @param bufsize size of read buffer
+         * @param bufsize size of buffer for storing read line
          */
         void getLine(char *buf, unsigned long bufsize);
 
         /**
          * Reads from all Logfile instances.
+	 *
+	 * @param logfiles linked list of open logfiles
+	 *
+	 * @return the number of file descriptors ready for reading
          */
         static int readLogfiles(list<Logfile> logfiles);
 
@@ -89,23 +95,32 @@ using namespace std;
 	 *
 	 * @return the file descriptor set for reads
 	 */
-	// FIXME: This will become private once all file-handling is moved
-	// out of main().
-	static fd_set *getDescriptors();
+	static fd_set *getDescriptors(); 	// FIXME: Will be
+						// private once all file
+						// handling is removed
+						// from main().
+
 
     private:
 
+	/** Filename of logfile */
         string m_logfile;
+	/** FILE pointer of open logfile */
         FILE *m_fp;
+	/** File descriptor of open logfile */
         int m_fd;
+	/** Inode of open logfile */
         ino_t m_inode;
+
+	/** Maximum open logfile descriptor */
         static int m_maxFd;
+	/** File-descriptor set used for select() reads */
         static fd_set m_rfds;
 
         /**
          * Open logfile.
          *
-         * @param filename name of file
+         * @param filename name of logfile
          */
         void openLogfile(string filename);
 

@@ -29,7 +29,7 @@
 
 /**
  * @file logfile.cpp
- * Contains logfile handling.
+ * Implements basic logfile handling.
  */
 
 #include "logfile.h"
@@ -57,10 +57,10 @@ Logfile::~Logfile()
 {
 }
 
-/**
+/*
  * Open logfile.
  *
- * @param filename name of file
+ * @param filename name of logfile
  */
 void Logfile::openLogfile(string filename)
 {
@@ -89,13 +89,10 @@ void Logfile::openLogfile(string filename)
     {
         m_inode = -1;
     }
-    
 }
 
 /*
- * Checks to see if logfile inode has changed; if it has, the most
- * likely reason is that a new logfile has been created--in which case
- * we should switch to reading the new file.
+ * Checks to see if logfile inode has changed, close & reopen if so.
  */
 void Logfile::checkRefresh()
 {
@@ -103,6 +100,10 @@ void Logfile::checkRefresh()
 
     if (stat(m_logfile.c_str(), &stbuf) == 0)
     {
+
+	// The most likely reason the inode would be changed is if a new
+	// logfile has been created.
+	// If so, switch to reading the new file.
         if (m_inode != stbuf.st_ino)
         {
             //FIXME: Need exception handling.
@@ -125,10 +126,10 @@ int Logfile::getFd()
 }
 
 /*
- * Reads a line from logfile, stores in buf.
+ * Reads a line from logfile.
  *
  * @param buf buffer for storing read line
- * @param bufsize size of read buffer
+ * @param bufsize size of buffer for storing read line
  */
 void Logfile::getLine(char *buf, unsigned long bufsize)
 {
@@ -143,8 +144,12 @@ void Logfile::getLine(char *buf, unsigned long bufsize)
     }
 }
 
-/**
+/*
  * Reads from all Logfile instances.
+ *
+ * @param logfiles linked list of open logfiles
+ *
+ * @return the number of file descriptors ready for reading
  */
 
 int Logfile::readLogfiles(list<Logfile> logfiles)
@@ -174,7 +179,7 @@ int Logfile::readLogfiles(list<Logfile> logfiles)
     return retVal;
 }
 
-/**
+/*
  * Returns file descriptor set for reads.
  *
  * @return the file descriptor set for reads
