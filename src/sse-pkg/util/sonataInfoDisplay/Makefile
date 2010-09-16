@@ -12,7 +12,6 @@ SOURCES=main.cpp details.cpp utils.cpp screen.cpp components.cpp logfile.cpp
 OBJECTS1=$(SOURCES:.cpp=.o)
 OBJECTS=$(OBJECTS1:.c=.o)
 EXECUTABLE=sonataInfoDisplay
-#LIBS = -lnsl  -L/usr/lib -lm -lz -lpthread -lrt -lncurses
 LIBS = -L/usr/lib -lm -lz -lncurses
 
 all: $(SOURCES) $(EXECUTABLE) data docs
@@ -21,7 +20,8 @@ $(BUILD_BIN)/$(EXECUTABLE): $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS) 
 	$(CXX) -o $@ $(OBJECTS) $(EXTRA_OBJS) $(LIBS)
-	# This should be moved to an 'install' target.
+
+install: $(EXECUTABLE)
 	cp $(EXECUTABLE) $(BUILD_BIN)
 	cp ./displayDemo $(BUILD_BIN)
 
