@@ -40,6 +40,8 @@
 #include <sys/select.h>
 #include <sys/stat.h>
 #include <list>
+#include "components.h"
+#include "screen.h"
 
 using namespace std;
 
@@ -58,7 +60,7 @@ using namespace std;
          *
          * @param filename name of file
          */
-        Logfile(string filename);
+        Logfile(string filename, Components *details);
 
         /**
          * Destructor
@@ -88,7 +90,10 @@ using namespace std;
 	 *
 	 * @return the number of file descriptors ready for reading
          */
-        static int readLogfiles(list<Logfile> logfiles);
+        static int readLogfiles(list<Logfile> logfiles,
+				int *linesSinceLastStatus,
+				time_t *lastStatusTime,
+				Screen *screen);
 
 	/**
 	 * Returns file descriptor set for reads.
@@ -116,6 +121,9 @@ using namespace std;
         static int m_maxFd;
 	/** File-descriptor set used for select() reads */
         static fd_set m_rfds;
+
+	/** Input-line filter */
+	Components *m_details;
 
         /**
          * Open logfile.

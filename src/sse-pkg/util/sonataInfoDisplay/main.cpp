@@ -44,8 +44,8 @@
 
 #include "details.h"
 #include "utils.h"
-#include "screen.h"
-#include "components.h"
+//#include "screen.h"
+//#include "components.h"
 #include "logfile.h"
 #include <list>
 
@@ -70,7 +70,7 @@ int main(int argc, char **argv)
     string systemLogFileName = "";
     string systemErrorFileName = "";
     Screen screen;
-    char line[2048];
+    //    char line[2048];
     list<Logfile> logfiles;
 
     Components componentDetails;
@@ -90,9 +90,9 @@ int main(int argc, char **argv)
     systemLogFileName    = argv[2]; 
     systemErrorFileName  = argv[3]; 
 
-    Logfile systemStatusFile = Logfile(systemStatusFileName);
-    Logfile systemLogFile = Logfile(systemLogFileName);
-    Logfile systemErrorFile = Logfile(systemErrorFileName);
+    Logfile systemStatusFile = Logfile(systemStatusFileName, &componentDetails);
+    Logfile systemLogFile = Logfile(systemLogFileName, NULL);
+    Logfile systemErrorFile = Logfile(systemErrorFileName, NULL);
 
     logfiles.push_back(systemStatusFile);
     logfiles.push_back(systemLogFile);
@@ -102,37 +102,38 @@ int main(int argc, char **argv)
     screen.init();
     screen.screenResize(0);
 
-    time_t lastStatusTime = time(NULL);;
+    time_t lastStatusTime = time(NULL);
     int linesSinceLastStatus = 0;
 
     //Loop foever
     while(1)
     {
 
-        Logfile::readLogfiles(logfiles);
+        Logfile::readLogfiles(logfiles, &linesSinceLastStatus, &lastStatusTime,
+			      &screen);
 
         // FIXME: Move all the stuff below out of main!
         // (Note the current clumsy use of Logfile::m_rfds.)
 
         // Process any data read from the status file.
-        if(FD_ISSET(systemStatusFile.getFd(), Logfile::getDescriptors()))
-        {
-            systemStatusFile.getLine(line, sizeof(line) - 1);
-            if(line[0] != 0 && componentDetails.addWithFilter(line))
-                screen.paint(&componentDetails);
-            linesSinceLastStatus++;
-            memset(line, 0, sizeof(line));
-        }
+//        if(FD_ISSET(systemStatusFile.getFd(), Logfile::getDescriptors()))
+//        {
+//            systemStatusFile.getLine(line, sizeof(line) - 1);
+//            if(line[0] != 0 && componentDetails.addWithFilter(line))
+//                screen.paint(&componentDetails);
+//            linesSinceLastStatus++;
+//            memset(line, 0, sizeof(line));
+//        }
 
         //The trigger for the end of a status screen paint is "===..." but sometimes
         //this does not arrive, so we have to force it.
-        if(linesSinceLastStatus > 0 && (int)(time(NULL) - lastStatusTime) > 1)
-        {
-            linesSinceLastStatus = 0;
-            lastStatusTime = time(NULL);
-            componentDetails.addWithFilter("====================================");
-            screen.paint(&componentDetails);
-        }
+//        if(linesSinceLastStatus > 0 && (int)(time(NULL) - lastStatusTime) > 1)
+//        {
+//            linesSinceLastStatus = 0;
+//            lastStatusTime = time(NULL);
+//            componentDetails.addWithFilter("====================================");
+//            screen.paint(&componentDetails);
+//        }
 
         //Process the log file
         if(FD_ISSET(systemLogFile.getFd(), Logfile::getDescriptors()))

@@ -43,10 +43,11 @@ fd_set Logfile::m_rfds;
  *
  * @param filename name of file
  */
-Logfile::Logfile(string filename)
+Logfile::Logfile(string filename, Components *details)
 {
     m_logfile = filename;
     openLogfile(m_logfile);
+    m_details = details;
 }
 
 /*
@@ -152,7 +153,8 @@ void Logfile::getLine(char *buf, unsigned long bufsize)
  * @return the number of file descriptors ready for reading
  */
 
-int Logfile::readLogfiles(list<Logfile> logfiles)
+int Logfile::readLogfiles(list<Logfile> logfiles, int *linesSinceLastStatus,
+			  time_t *lastStatusTime, Screen *screen)
 {
     FD_ZERO(&m_rfds);
     FD_SET(0, &m_rfds);
@@ -175,6 +177,32 @@ int Logfile::readLogfiles(list<Logfile> logfiles)
     //
     // Consider a delay by e.g. opting out of &m_rfds for n passes when at EOF?
     retVal = select(Logfile::m_maxFd + 1, &m_rfds, NULL, NULL, &tv);
+
+    for(it=logfiles.begin(); it != logfiles.end(); it++)
+    {
+	if(it->m_details != NULL)
+	{
+	    char line[2048];
+
+	    if(FD_ISSET(it->getFd(), &m_rfds))
+	    {
+		it->getLine(line, sizeof(line) - 1);
+		if(line[0] != 0 && it->m_details->addWithFilter(line))
+		    screen->paint(it->m_details);
+		(*linesSinceLastStatus)++;
+		memset(line, 0, sizeof(line));
+	    }
+	    //FIXME: Hack--move to filter in some way?
+	    if(*linesSinceLastStatus > 0 &&
+	       (int)(time(NULL) - *lastStatusTime) > 1)
+	    {
+		*linesSinceLastStatus = 0;
+		*lastStatusTime = time(NULL);
+		it->m_details->addWithFilter("====================================");
+		screen->paint(it->m_details);
+	    }
+	}
+    }
 
     return retVal;
 }
