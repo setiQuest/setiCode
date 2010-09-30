@@ -118,8 +118,7 @@ using namespace std;
 	/** File-descriptor set used for select() reads */
         static fd_set m_rfds;
 	/** Inode of open logfile */
-        static ino_t m_inode;
-
+        ino_t m_inode;
 
 	/** Input-line filter */
 	Components *m_details;

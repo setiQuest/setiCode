@@ -34,7 +34,6 @@
 
 #include "logfile.h"
 
-ino_t Logfile::m_inode = 0;		// FIXME: Only static for testing.
 int Logfile::m_maxFd = 0;
 fd_set Logfile::m_rfds;
 
@@ -80,11 +79,10 @@ void Logfile::openLogfile(string filename)
     {
         Logfile::m_maxFd = m_fd;
     }
-
     struct stat stbuf;
     if(fstat(m_fd, &stbuf) == 0)
     {
-	Logfile::m_inode = stbuf.st_ino;
+	m_inode = stbuf.st_ino;
     }
 //     else
 //     {
@@ -101,11 +99,10 @@ void Logfile::checkRefresh()
 
     if (stat(m_logfile.c_str(), &stbuf) == 0)
     {
-
 	// The most likely reason the inode would be changed is if a new
 	// logfile has been created.
 	// If so, switch to reading the new file.
-        if (Logfile::m_inode != stbuf.st_ino)
+        if (m_inode != stbuf.st_ino)
         {
             //FIXME: Need exception handling.
             if(fclose(m_fp) == 0)
