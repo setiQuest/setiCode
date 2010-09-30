@@ -51,14 +51,6 @@ Logfile::Logfile(string filename, Components *details)
 }
 
 /*
- * Destructor
- * Does nothing.
- */
-Logfile::~Logfile()
-{
-}
-
-/*
  * Open logfile.
  *
  * @param filename name of logfile
@@ -70,7 +62,7 @@ void Logfile::openLogfile(string filename)
     m_fp = fopen(filename.c_str(), "a+");
     if(m_fp == NULL)
     {
-        // FIXME: actually exit, send this to stderr.
+        // FIXME: actually exit, then send this to stderr.
         fprintf(stdout," Could not open %s, EXITING.\n", filename.c_str());
     }
 
@@ -84,10 +76,10 @@ void Logfile::openLogfile(string filename)
     {
 	m_inode = stbuf.st_ino;
     }
-//     else
-//     {
-//         Logfile::m_inode = -1;
-//     }
+    else
+    {
+        m_inode = -1;
+    }
 }
 
 /*
@@ -104,7 +96,7 @@ void Logfile::checkRefresh()
 	// If so, switch to reading the new file.
         if (m_inode != stbuf.st_ino)
         {
-            //FIXME: Need exception handling.
+            // FIXME: Needs exception handling.
             if(fclose(m_fp) == 0)
             {
                 openLogfile(m_logfile);
@@ -150,7 +142,7 @@ void Logfile::getLine(char *buf, unsigned long bufsize)
  * @return the number of file descriptors ready for reading
  */
 
-int Logfile::readLogfiles(list<Logfile> logfiles,
+int Logfile::readLogfiles(list<Logfile>& logfiles,
 			  time_t *lastStatusTime,
 			  Screen *screen)
 {
@@ -168,7 +160,7 @@ int Logfile::readLogfiles(list<Logfile> logfiles,
     struct timeval tv;
 
     tv.tv_sec = 0;
-    tv.tv_usec = 200000; //1/5 second
+    tv.tv_usec = 200000; // 1/5 second
 
     int retVal = -1;
 
@@ -205,14 +197,4 @@ int Logfile::readLogfiles(list<Logfile> logfiles,
     }
 
     return retVal;
-}
-
-/*
- * Returns file descriptor set for reads.
- *
- * @return the file descriptor set for reads
- */
-fd_set *Logfile::getDescriptors()
-{
-    return &Logfile::m_rfds;
 }

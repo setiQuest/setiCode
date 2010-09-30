@@ -44,8 +44,6 @@
 
 #include "details.h"
 #include "utils.h"
-//#include "screen.h"
-//#include "components.h"
 #include "logfile.h"
 #include <list>
 
@@ -70,7 +68,6 @@ int main(int argc, char **argv)
     string systemLogFileName = "";
     string systemErrorFileName = "";
     Screen screen;
-    //    char line[2048];
     list<Logfile> logfiles;
 
     Components componentDetails;
@@ -91,64 +88,24 @@ int main(int argc, char **argv)
     systemErrorFileName  = argv[3]; 
 
     Logfile systemStatusFile = Logfile(systemStatusFileName, &componentDetails);
-    //    Logfile systemLogFile = Logfile(systemLogFileName, NULL);
-    //    Logfile systemErrorFile = Logfile(systemErrorFileName, NULL);
+    Logfile systemLogFile = Logfile(systemLogFileName, NULL);
+    Logfile systemErrorFile = Logfile(systemErrorFileName, NULL);
 
     logfiles.push_back(systemStatusFile);
-    //    logfiles.push_back(systemLogFile);
-    //    logfiles.push_back(systemErrorFile);
+    logfiles.push_back(systemLogFile);
+    logfiles.push_back(systemErrorFile);
 
-    //Initialize the curses screen.
+    // Initialize the curses screen.
     screen.init();
     screen.screenResize(0);
 
-    time_t lastStatusTime = time(NULL);	// FIXME: move to class?
+    time_t lastStatusTime = time(NULL);	// FIXME: move to class.
 
-    //Loop foever
+    // Loop foever
     while(1)
     {
-
-        Logfile::readLogfiles(logfiles,
-			      &lastStatusTime, 
-			      &screen);
-
-        // FIXME: Move all the stuff below out of main!
-        // (Note the current clumsy use of Logfile::m_rfds.)
-
-        // Process any data read from the status file.
-//        if(FD_ISSET(systemStatusFile.getFd(), Logfile::getDescriptors()))
-//        {
-//            systemStatusFile.getLine(line, sizeof(line) - 1);
-//            if(line[0] != 0 && componentDetails.addWithFilter(line))
-//                screen.paint(&componentDetails);
-//            linesSinceLastStatus++;
-//            memset(line, 0, sizeof(line));
-//        }
-
-        //The trigger for the end of a status screen paint is "===..." but sometimes
-        //this does not arrive, so we have to force it.
-//        if(linesSinceLastStatus > 0 && (int)(time(NULL) - lastStatusTime) > 1)
-//        {
-//            linesSinceLastStatus = 0;
-//            lastStatusTime = time(NULL);
-//            componentDetails.addWithFilter("====================================");
-//            screen.paint(&componentDetails);
-//        }
-
-        //Process the log file
-//        if(FD_ISSET(systemLogFile.getFd(), Logfile::getDescriptors()))
-//        {
-//        }
-
-        //Process the error file
-//        if(FD_ISSET(systemErrorFile.getFd(), Logfile::getDescriptors()))
-//        {
-//        }
-
+        Logfile::readLogfiles(logfiles, &lastStatusTime, &screen);
         screen.processKey(&componentDetails);
     }
-
-
     return 0;
-
 }

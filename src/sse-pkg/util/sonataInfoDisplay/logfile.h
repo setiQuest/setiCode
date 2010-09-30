@@ -66,7 +66,7 @@ using namespace std;
          * Destructor
 	 * Does nothing.
          */
-        ~Logfile();
+        ~Logfile() {};
 
         /**
          * Returns the logfile's file descriptor.
@@ -90,19 +90,9 @@ using namespace std;
 	 *
 	 * @return the number of file descriptors ready for reading
          */
-        static int readLogfiles(list<Logfile> logfiles,
+        static int readLogfiles(list<Logfile>& logfiles,
 				time_t *lastStatusTime,
 				Screen *screen);
-
-	/**
-	 * Returns file descriptor set for reads.
-	 *
-	 * @return the file descriptor set for reads
-	 */
-	static fd_set *getDescriptors(); 	// FIXME: Will be
-						// private once all file
-						// handling is removed
-						// from main().
 
     private:
 
@@ -112,13 +102,13 @@ using namespace std;
         FILE *m_fp;
 	/** File descriptor of open logfile */
         int m_fd;
+	/** Inode of open logfile */
+        ino_t m_inode;
 
 	/** Maximum open logfile descriptor */
         static int m_maxFd;
 	/** File-descriptor set used for select() reads */
         static fd_set m_rfds;
-	/** Inode of open logfile */
-        ino_t m_inode;
 
 	/** Input-line filter */
 	Components *m_details;
