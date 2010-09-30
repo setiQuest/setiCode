@@ -91,7 +91,6 @@ using namespace std;
 	 * @return the number of file descriptors ready for reading
          */
         static int readLogfiles(list<Logfile> logfiles,
-				int *linesSinceLastStatus,
 				time_t *lastStatusTime,
 				Screen *screen);
 
@@ -105,7 +104,6 @@ using namespace std;
 						// handling is removed
 						// from main().
 
-
     private:
 
 	/** Filename of logfile */
@@ -114,13 +112,14 @@ using namespace std;
         FILE *m_fp;
 	/** File descriptor of open logfile */
         int m_fd;
-	/** Inode of open logfile */
-        ino_t m_inode;
 
 	/** Maximum open logfile descriptor */
         static int m_maxFd;
 	/** File-descriptor set used for select() reads */
         static fd_set m_rfds;
+	/** Inode of open logfile */
+        static ino_t m_inode;
+
 
 	/** Input-line filter */
 	Components *m_details;

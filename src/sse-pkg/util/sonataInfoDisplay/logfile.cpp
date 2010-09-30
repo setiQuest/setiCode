@@ -34,6 +34,7 @@
 
 #include "logfile.h"
 
+ino_t Logfile::m_inode = 0;		// FIXME: Only static for testing.
 int Logfile::m_maxFd = 0;
 fd_set Logfile::m_rfds;
 
@@ -70,7 +71,7 @@ void Logfile::openLogfile(string filename)
     m_fp = fopen(filename.c_str(), "a+");
     if(m_fp == NULL)
     {
-        // Change to stderr?
+        // FIXME: actually exit, send this to stderr.
         fprintf(stdout," Could not open %s, EXITING.\n", filename.c_str());
     }
 
@@ -81,15 +82,14 @@ void Logfile::openLogfile(string filename)
     }
 
     struct stat stbuf;
-
     if(fstat(m_fd, &stbuf) == 0)
     {
-        m_inode = stbuf.st_ino;
+	Logfile::m_inode = stbuf.st_ino;
     }
-    else
-    {
-        m_inode = -1;
-    }
+//     else
+//     {
+//         Logfile::m_inode = -1;
+//     }
 }
 
 /*
@@ -105,7 +105,7 @@ void Logfile::checkRefresh()
 	// The most likely reason the inode would be changed is if a new
 	// logfile has been created.
 	// If so, switch to reading the new file.
-        if (m_inode != stbuf.st_ino)
+        if (Logfile::m_inode != stbuf.st_ino)
         {
             //FIXME: Need exception handling.
             if(fclose(m_fp) == 0)
@@ -153,9 +153,12 @@ void Logfile::getLine(char *buf, unsigned long bufsize)
  * @return the number of file descriptors ready for reading
  */
 
-int Logfile::readLogfiles(list<Logfile> logfiles, int *linesSinceLastStatus,
-			  time_t *lastStatusTime, Screen *screen)
+int Logfile::readLogfiles(list<Logfile> logfiles,
+			  time_t *lastStatusTime,
+			  Screen *screen)
 {
+    int linesSinceLastStatus = 0;
+
     FD_ZERO(&m_rfds);
     FD_SET(0, &m_rfds);
 
@@ -189,14 +192,14 @@ int Logfile::readLogfiles(list<Logfile> logfiles, int *linesSinceLastStatus,
 		it->getLine(line, sizeof(line) - 1);
 		if(line[0] != 0 && it->m_details->addWithFilter(line))
 		    screen->paint(it->m_details);
-		(*linesSinceLastStatus)++;
+		linesSinceLastStatus++;
 		memset(line, 0, sizeof(line));
 	    }
 	    //FIXME: Hack--move to filter in some way?
-	    if(*linesSinceLastStatus > 0 &&
+	    if(linesSinceLastStatus > 0 &&
 	       (int)(time(NULL) - *lastStatusTime) > 1)
 	    {
-		*linesSinceLastStatus = 0;
+		linesSinceLastStatus = 0;
 		*lastStatusTime = time(NULL);
 		it->m_details->addWithFilter("====================================");
 		screen->paint(it->m_details);

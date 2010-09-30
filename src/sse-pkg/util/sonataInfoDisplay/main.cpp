@@ -91,25 +91,25 @@ int main(int argc, char **argv)
     systemErrorFileName  = argv[3]; 
 
     Logfile systemStatusFile = Logfile(systemStatusFileName, &componentDetails);
-    Logfile systemLogFile = Logfile(systemLogFileName, NULL);
-    Logfile systemErrorFile = Logfile(systemErrorFileName, NULL);
+    //    Logfile systemLogFile = Logfile(systemLogFileName, NULL);
+    //    Logfile systemErrorFile = Logfile(systemErrorFileName, NULL);
 
     logfiles.push_back(systemStatusFile);
-    logfiles.push_back(systemLogFile);
-    logfiles.push_back(systemErrorFile);
+    //    logfiles.push_back(systemLogFile);
+    //    logfiles.push_back(systemErrorFile);
 
     //Initialize the curses screen.
     screen.init();
     screen.screenResize(0);
 
-    time_t lastStatusTime = time(NULL);
-    int linesSinceLastStatus = 0;
+    time_t lastStatusTime = time(NULL);	// FIXME: move to class?
 
     //Loop foever
     while(1)
     {
 
-        Logfile::readLogfiles(logfiles, &linesSinceLastStatus, &lastStatusTime,
+        Logfile::readLogfiles(logfiles,
+			      &lastStatusTime, 
 			      &screen);
 
         // FIXME: Move all the stuff below out of main!
@@ -136,14 +136,14 @@ int main(int argc, char **argv)
 //        }
 
         //Process the log file
-        if(FD_ISSET(systemLogFile.getFd(), Logfile::getDescriptors()))
-        {
-        }
+//        if(FD_ISSET(systemLogFile.getFd(), Logfile::getDescriptors()))
+//        {
+//        }
 
         //Process the error file
-        if(FD_ISSET(systemErrorFile.getFd(), Logfile::getDescriptors()))
-        {
-        }
+//        if(FD_ISSET(systemErrorFile.getFd(), Logfile::getDescriptors()))
+//        {
+//        }
 
         screen.processKey(&componentDetails);
     }
