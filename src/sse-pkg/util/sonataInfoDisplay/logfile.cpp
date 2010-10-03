@@ -36,6 +36,7 @@
 
 int Logfile::m_maxFd = 0;
 fd_set Logfile::m_rfds;
+time_t Logfile::lastStatusTime = -1;
 
 /*
  * Constructor
@@ -142,12 +143,14 @@ void Logfile::getLine(char *buf, unsigned long bufsize)
  * @return the number of file descriptors ready for reading
  */
 
-int Logfile::readLogfiles(list<Logfile>& logfiles,
-			  time_t *lastStatusTime,
-			  Screen *screen)
+int Logfile::readLogfiles(list<Logfile>& logfiles, Screen *screen)
 {
     int linesSinceLastStatus = 0;
 
+    if(Logfile::lastStatusTime == -1)
+    {
+	Logfile::lastStatusTime = time(NULL);
+    }
     FD_ZERO(&m_rfds);
     FD_SET(0, &m_rfds);
 
@@ -186,10 +189,10 @@ int Logfile::readLogfiles(list<Logfile>& logfiles,
 	    }
 	    //FIXME: Hack--move to filter in some way?
 	    if(linesSinceLastStatus > 0 &&
-	       (int)(time(NULL) - *lastStatusTime) > 1)
+	       (int)(time(NULL) - Logfile::lastStatusTime) > 1)
 	    {
 		linesSinceLastStatus = 0;
-		*lastStatusTime = time(NULL);
+		Logfile::lastStatusTime = time(NULL);
 		it->m_details->addWithFilter("====================================");
 		screen->paint(it->m_details);
 	    }

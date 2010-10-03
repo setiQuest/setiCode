@@ -99,12 +99,10 @@ int main(int argc, char **argv)
     screen.init();
     screen.screenResize(0);
 
-    time_t lastStatusTime = time(NULL);	// FIXME: move to class.
-
     // Loop foever
     while(1)
     {
-        Logfile::readLogfiles(logfiles, &lastStatusTime, &screen);
+        Logfile::readLogfiles(logfiles, &screen);
         screen.processKey(&componentDetails);
     }
     return 0;

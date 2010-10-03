@@ -90,9 +90,7 @@ using namespace std;
 	 *
 	 * @return the number of file descriptors ready for reading
          */
-        static int readLogfiles(list<Logfile>& logfiles,
-				time_t *lastStatusTime,
-				Screen *screen);
+        static int readLogfiles(list<Logfile>& logfiles, Screen *screen);
 
     private:
 
@@ -109,6 +107,8 @@ using namespace std;
         static int m_maxFd;
 	/** File-descriptor set used for select() reads */
         static fd_set m_rfds;
+	/** Timestamp of most recently read status. */
+	static time_t lastStatusTime;
 
 	/** Input-line filter */
 	Components *m_details;
