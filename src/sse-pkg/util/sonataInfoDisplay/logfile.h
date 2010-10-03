@@ -108,7 +108,7 @@ using namespace std;
 	/** File-descriptor set used for select() reads */
         static fd_set m_rfds;
 	/** Timestamp of most recently read status. */
-	static time_t lastStatusTime;
+	static time_t m_lastStatusTime;
 
 	/** Input-line filter */
 	Components *m_details;
