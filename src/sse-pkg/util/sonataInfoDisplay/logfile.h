@@ -40,6 +40,8 @@
 #include <sys/select.h>
 #include <sys/stat.h>
 #include <list>
+#include "components.h"
+#include "screen.h"
 
 using namespace std;
 
@@ -58,13 +60,13 @@ using namespace std;
          *
          * @param filename name of file
          */
-        Logfile(string filename);
+        Logfile(string filename, Components *details);
 
         /**
          * Destructor
 	 * Does nothing.
          */
-        ~Logfile();
+        ~Logfile() {};
 
         /**
          * Returns the logfile's file descriptor.
@@ -88,18 +90,7 @@ using namespace std;
 	 *
 	 * @return the number of file descriptors ready for reading
          */
-        static int readLogfiles(list<Logfile> logfiles);
-
-	/**
-	 * Returns file descriptor set for reads.
-	 *
-	 * @return the file descriptor set for reads
-	 */
-	static fd_set *getDescriptors(); 	// FIXME: Will be
-						// private once all file
-						// handling is removed
-						// from main().
-
+        static int readLogfiles(list<Logfile>& logfiles, Screen *screen);
 
     private:
 
@@ -116,6 +107,11 @@ using namespace std;
         static int m_maxFd;
 	/** File-descriptor set used for select() reads */
         static fd_set m_rfds;
+	/** Timestamp of most recently read status. */
+	static time_t m_lastStatusTime;
+
+	/** Input-line filter */
+	Components *m_details;
 
         /**
          * Open logfile.

@@ -36,6 +36,7 @@
 
 int Logfile::m_maxFd = 0;
 fd_set Logfile::m_rfds;
+time_t Logfile::m_lastStatusTime = -1;
 
 /*
  * Constructor
@@ -43,18 +44,11 @@ fd_set Logfile::m_rfds;
  *
  * @param filename name of file
  */
-Logfile::Logfile(string filename)
+Logfile::Logfile(string filename, Components *details)
 {
     m_logfile = filename;
     openLogfile(m_logfile);
-}
-
-/*
- * Destructor
- * Does nothing.
- */
-Logfile::~Logfile()
-{
+    m_details = details;
 }
 
 /*
@@ -69,7 +63,7 @@ void Logfile::openLogfile(string filename)
     m_fp = fopen(filename.c_str(), "a+");
     if(m_fp == NULL)
     {
-        // Change to stderr?
+        // FIXME: actually exit, then send this to stderr.
         fprintf(stdout," Could not open %s, EXITING.\n", filename.c_str());
     }
 
@@ -78,12 +72,10 @@ void Logfile::openLogfile(string filename)
     {
         Logfile::m_maxFd = m_fd;
     }
-
     struct stat stbuf;
-
     if(fstat(m_fd, &stbuf) == 0)
     {
-        m_inode = stbuf.st_ino;
+	m_inode = stbuf.st_ino;
     }
     else
     {
@@ -100,13 +92,12 @@ void Logfile::checkRefresh()
 
     if (stat(m_logfile.c_str(), &stbuf) == 0)
     {
-
 	// The most likely reason the inode would be changed is if a new
 	// logfile has been created.
 	// If so, switch to reading the new file.
         if (m_inode != stbuf.st_ino)
         {
-            //FIXME: Need exception handling.
+            // FIXME: Needs exception handling.
             if(fclose(m_fp) == 0)
             {
                 openLogfile(m_logfile);
@@ -152,8 +143,14 @@ void Logfile::getLine(char *buf, unsigned long bufsize)
  * @return the number of file descriptors ready for reading
  */
 
-int Logfile::readLogfiles(list<Logfile> logfiles)
+int Logfile::readLogfiles(list<Logfile>& logfiles, Screen *screen)
 {
+    int linesSinceLastStatus = 0;
+
+    if(Logfile::m_lastStatusTime == -1)
+    {
+	Logfile::m_lastStatusTime = time(NULL);
+    }
     FD_ZERO(&m_rfds);
     FD_SET(0, &m_rfds);
 
@@ -166,7 +163,7 @@ int Logfile::readLogfiles(list<Logfile> logfiles)
     struct timeval tv;
 
     tv.tv_sec = 0;
-    tv.tv_usec = 200000; //1/5 second
+    tv.tv_usec = 200000; // 1/5 second
 
     int retVal = -1;
 
@@ -176,15 +173,31 @@ int Logfile::readLogfiles(list<Logfile> logfiles)
     // Consider a delay by e.g. opting out of &m_rfds for n passes when at EOF?
     retVal = select(Logfile::m_maxFd + 1, &m_rfds, NULL, NULL, &tv);
 
-    return retVal;
-}
+    for(it=logfiles.begin(); it != logfiles.end(); it++)
+    {
+	if(it->m_details != NULL)
+	{
+	    char line[2048];
 
-/*
- * Returns file descriptor set for reads.
- *
- * @return the file descriptor set for reads
- */
-fd_set *Logfile::getDescriptors()
-{
-    return &Logfile::m_rfds;
+	    if(FD_ISSET(it->getFd(), &m_rfds))
+	    {
+		it->getLine(line, sizeof(line) - 1);
+		if(line[0] != 0 && it->m_details->addWithFilter(line))
+		    screen->paint(it->m_details);
+		linesSinceLastStatus++;
+		memset(line, 0, sizeof(line));
+	    }
+	    //FIXME: Hack--move to filter in some way?
+	    if(linesSinceLastStatus > 0 &&
+	       (int)(time(NULL) - Logfile::m_lastStatusTime) > 1)
+	    {
+		linesSinceLastStatus = 0;
+		Logfile::m_lastStatusTime = time(NULL);
+		it->m_details->addWithFilter("====================================");
+		screen->paint(it->m_details);
+	    }
+	}
+    }
+
+    return retVal;
 }
